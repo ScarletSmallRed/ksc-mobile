@@ -184,8 +184,15 @@
       },
       checkOut(){
         if(this.checkedCount>0){
+          this.checkedProducts.forEach((item) => {
+            this.delItem = item
+            this.delCart()
+          })
           this.$router.push({
-            path:"/info"
+            path:"/info",
+            query: {
+              'checkedProducts': this.checkedProducts,
+              'totalPrice': this.totalPrice}
           });
         }
       }
