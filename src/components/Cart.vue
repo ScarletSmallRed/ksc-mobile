@@ -6,25 +6,19 @@
           <span style="color: #d9d9d9; padding-left: 20px; font-size: 20px">购物车</span>
         </el-col>
         <el-col :span="12">
-          <el-button style="position: relative; top: -5px; right: -30px" :disabled="checkedCount === 0" @click="checkOut">生成订单</el-button>
         </el-col>
       </el-row>
     </el-header>
     <div style="margin-bottom: 40px">#################</div>
 
-    <el-checkbox v-model="checkAll"  @change="handleCheckAllChange">
-      <p style="font-size: 30px; text-align: left">
-        全选 <span style="padding-left: 100px; font-size: 25px"><span style="color: #409EFF">总价：</span>{{totalPrice}}</span>
-      </p>
-    </el-checkbox>
     <div style="margin: 15px 0;"></div>
     <el-checkbox-group v-model="checkedProducts" @change="handleCheckedCitiesChange">
-        <el-row v-for="product in products" :key="product.name + ''" :gutter="25" style="text-align: left; font-size: 13px; margin-bottom: 20px">
+        <el-row v-for="product in products" :key="product.name" :gutter="25" style="text-align: left; font-size: 13px; margin-bottom: 20px">
           <el-col :span="7">
-            <el-checkbox :label="product" @change="editCart('check', product)">{{product.name}}</el-checkbox>
+            <el-checkbox :label="product" @change="editCart('check', product)">{{product.goodsInfo.goodsName}}</el-checkbox>
           </el-col>
           <el-col :span="4">
-            {{product.price|currency('$')}}
+            {{product.goodsInfo.goodsPrice|currency('$')}}
           </el-col>
           <el-col :span="2">
             x
@@ -32,13 +26,13 @@
           <el-col :span="5" style="font-size: 13px">
             <el-row :gutter="5">
               <el-col :span="6">
-                <a @click="editCart('add', product)"><i class="el-icon-plus"></i></a>
-              </el-col>
-              <el-col :span="6">
-                {{product.num}}
-              </el-col>
-              <el-col :span="6">
                 <a @click="editCart('minus', product)"><i class="el-icon-minus"></i></a>
+              </el-col>
+              <el-col :span="6">
+                {{product.goodsNum}}
+              </el-col>
+              <el-col :span="6">
+                <a @click="editCart('add', product)"><i class="el-icon-plus"></i></a>
               </el-col>
             </el-row>
           </el-col>
@@ -67,6 +61,34 @@
         </el-row>
     </el-checkbox-group>
 
+
+
+
+
+
+    <el-row class="sum-counter">
+      <el-col :span="6">
+        <el-checkbox v-model="checkAll" @change="handleCheckAllChange">
+          <p style="text-align: left">
+            全选
+          </p>
+        </el-checkbox>
+      </el-col>
+      <el-col :span="12" style="height: 45px; line-height: 45px; text-align: center; font-size: 15px">
+        总价：{{totalPrice|currency('$')}}
+      </el-col>
+      <el-col :span="6">
+        <el-button type="danger" :disabled="checkedCount === 0" @click="openOrderDialog">生成订单</el-button>
+      </el-col>
+    </el-row>
+
+    <order-dialog :visible="orderDialogVisible"
+                  :totalPrice="totalPrice"
+                  :checkedProducts="checkedProducts"
+                  v-on:deleteCheckedProducts="deleteCheckedProducts"
+                  v-on:closeDialog="closeDialog"></order-dialog>
+
+
     <div style="margin-bottom: 40px"></div>
   </div>
 </template>
@@ -75,19 +97,24 @@
   import ElRow from "element-ui/packages/row/src/row";
   import axios from 'axios';
   import {currency} from "../util/currency";
+  import OrderDialog from './../components/OrderDialog'
 
 	export default {
-    components: {ElRow},
+    components: {
+      ElRow,
+      OrderDialog,
+    },
     name: "cart",
 		data() {
 			return {
-        checkAll: false,
+        checkAll: undefined,
         checkedProducts: [],
         products: [],
         isIndeterminate: true,
         dialogVisible: false,
         delItem: {},
         isDisable: false,
+        orderDialogVisible: false
 			}
 		},
     mounted() {
@@ -100,8 +127,8 @@
       totalPrice() {
         var sumMoney = 0
         this.products.forEach((item) => {
-          if (item.checked === '1') {
-            sumMoney += item.price * item.num
+          if (item.goodsChecked === '1') {
+            sumMoney += item.goodsInfo.goodsPrice * item.goodsNum
           }
         })
         return sumMoney
@@ -109,7 +136,7 @@
       checkedCount() {
         var i = 0
         this.products.forEach((item) => {
-          if (item.checked === '1')
+          if (item.goodsChecked === '1')
             i++
         })
         return i
@@ -140,7 +167,7 @@
 
           if (res.status === '0') {
             this.checkedProducts = res.result.filter(function (a) {
-              return a.checked === '1'
+              return a.goodsChecked === '1'
             })
 
             this.products = res.result
@@ -149,28 +176,28 @@
       },
       editCart(flag, item) {
         if (flag === 'add') {
-          item.num++
+          item.goodsNum++
         } else if (flag === 'minus') {
-          if (item.num > 1) {
-            item.num--
+          if (item.goodsNum > 1) {
+            item.goodsNum--
           }
         } else if (flag === 'check') {
           console.log(item)
-          item.checked = item.checked === '1' ? '0' : '1'
+          item.goodsChecked = item.goodsChecked === '1' ? '0' : '1'
         } else if (flag === 'checkAll') {
-          item.checked = this.checkAll ? '1' : '0'
+          item.goodsChecked = this.checkAll ? '1' : '0'
         }
 
         axios.post('/users/cartEdit', {
-          name: item.name,
-          num: item.num,
-          checked: item.checked
+          goodsId: item.goodsInfo._id,
+          goodsNum: item.goodsNum,
+          goodsChecked: item.goodsChecked
         })
       },
       delCart(){
         this.dialogVisible = false
         axios.post("/users/cartDel",{
-          name: this.delItem.name
+          goodsId: this.delItem.goodsInfo._id
         }).then((response)=>{
           let res = response.data;
           if(res.status == '0'){
@@ -182,24 +209,39 @@
         this.delItem = item
         this.dialogVisible = true
       },
-      checkOut(){
+      openOrderDialog(){
+        if(this.checkedCount>0){
+          this.orderDialogVisible = true
+        }
+      },
+      deleteCheckedProducts() {
         if(this.checkedCount>0){
           this.checkedProducts.forEach((item) => {
             this.delItem = item
             this.delCart()
           })
-          this.$router.push({
-            path:"/info",
-            query: {
-              'checkedProducts': this.checkedProducts,
-              'totalPrice': this.totalPrice}
-          });
+
+          this.closeDialog()
         }
+      },
+
+      closeDialog() {
+        this.orderDialogVisible = false
+      },
+      test() {
+        alert('Test')
       }
     }
 	}
 </script>
 
 <style scoped>
-
+  .sum-counter {
+    border-top: 1px solid #dcdfe6;
+    position: fixed;
+    bottom: 50px;
+    left: 0;
+    width: 100%;
+    padding: 5px 20px 0px 20px;
+  }
 </style>

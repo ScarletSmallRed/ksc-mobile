@@ -28,7 +28,7 @@
             <div style="padding-left: 10px; color: #9d9696;">选择地址</div>
           </el-col>
           <el-col :span="12" style="text-align: right">
-            <i class="el-icon-circle-plus" style="font-size: 23px; color: #409EFF; padding-right: 20px" @click="editAddrDialogVisible=true"></i>
+            <!--<i class="el-icon-circle-plus" style="font-size: 23px; color: #409EFF; padding-right: 20px" @click="editUserInfoDialogVisible=true"></i>-->
           </el-col>
         </el-row>
 
@@ -36,39 +36,56 @@
 
 
 
-        <el-card v-for="(item, index) in addressList"
-                 :key="item.name"
-                 style="width: 99%; margin-bottom: 10px"
-                 :class="{'address-check': checkIndex === index}"
+        <el-card style="width: 99%; margin-bottom: 10px"
+                 class="address-check"
                  body-style="padding: 5px 10px 0px 10px">
           <div slot="header" class="clearfix">
         <span style="font-weight: bold">
-          {{item.userName}} <a style="margin-left: 12px; color: #409EFF" @click="editAddressConfirm(item)" type="text"><i class="fa fa-edit"></i></a>
+          {{userInfo.userName}} <a style="margin-left: 12px; color: #409EFF" @click="editUserInfoConfirm" type="text"><i class="fa fa-edit"></i> </a>
         </span>
-            <el-button style="float: right; padding: 3px 0; font-size: 20px; border: none;color: #d9d9d9" @click="chooseAddress(item, index)" plain>
-              <i :class="['el-icon-success', {'icon-check': checkIndex === index}]" style=""></i>
+            <el-button style="float: right; padding: 3px 0; font-size: 20px; border: none;color: #d9d9d9" plain>
+              <!--<i :class="['el-icon-success', {'icon-check': checkIndex === index}]" style=""></i>-->
             </el-button>
           </div>
           <div style="position: relative">
             <div>
-              <span style="color: rgb(64, 158, 255)">地址 <i class="fa fa-home" aria-hidden="true"></i></span>: {{item.streetName}}
+              <span style="color: rgb(64, 158, 255)">地址 <i class="fa fa-home" aria-hidden="true"></i></span>: {{userInfo.userAddress}}
             </div>
             <div>
-              <span style="color: rgb(64, 158, 255)">电话 <i class="fa fa-phone" aria-hidden="true"></i></span>:  {{item.tel}}
+              <span style="color: rgb(64, 158, 255)">电话 <i class="fa fa-phone" aria-hidden="true"></i></span>:  {{userInfo.userPhone}}
             </div>
             <div>
-              <span style="color: rgb(64, 158, 255)">邮编 <i class="fa fa-envelope-square" aria-hidden="true"></i></span>: {{item.postCode}}
+              <span style="color: rgb(64, 158, 255)">邮编 <i class="fa fa-envelope-square" aria-hidden="true"></i></span>: {{userInfo.userPostCode}}
             </div>
-            <el-button type="text" @click="delAddressConfirm(item._id)">
-              <i class="fa fa-trash" style="font-size: 20px; position: absolute; right: 0px; bottom: 10px"></i>
-            </el-button>
+            <div>
+              <span style="color: rgb(64, 158, 255)">邮箱 <i class="fa fa-at" aria-hidden="true"></i></span>: {{userInfo.userEmail}}
+            </div>
 
           </div>
         </el-card>
       </mt-tab-container-item>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       <mt-tab-container-item id="2">
 
-        <div v-if="addrUserName && totalCheckedProductsPrice" style="margin-bottom: 10px">
+        <div v-if="totalCheckedProductsPrice" style="margin-bottom: 10px">
           <el-row :gutter="20" style="margin-bottom: 10px">
             <el-col :span="12">
               <div style="padding-left: 10px; color: #9d9696;">待确认</div>
@@ -82,23 +99,23 @@
               <span style="font-weight: bold">待生成订单</span>
               <el-button style="float: right; padding: 3px 0"
                          type="text"
-                         @click="addOrder">确认</el-button>
+                         @click="addOrderToBills">确认</el-button>
               <el-button style="float: right; padding: 3px 10px"
                          type="text"
                          @click="totalCheckedProductsPrice=0"
                          plain>取消</el-button>
 
               <div style="margin-top: 5px">
-                <span style="color: rgb(64, 158, 255)">姓名 <i class="fa fa-user" aria-hidden="true"></i></span>: {{addrUserName}}
+                <span style="color: rgb(64, 158, 255)">姓名 <i class="fa fa-user" aria-hidden="true"></i></span>: {{userInfo.userName}}
               </div>
               <div>
-                <span style="color: rgb(64, 158, 255)">地址 <i class="fa fa-home" aria-hidden="true"></i></span>: {{addrString}}
+                <span style="color: rgb(64, 158, 255)">地址 <i class="fa fa-home" aria-hidden="true"></i></span>: {{userInfo.userAddress}}
               </div>
               <div>
-                <span style="color: rgb(64, 158, 255)">电话 <i class="fa fa-phone" aria-hidden="true"></i></span>:  {{addrTel}}
+                <span style="color: rgb(64, 158, 255)">电话 <i class="fa fa-phone" aria-hidden="true"></i></span>:  {{userInfo.userPhone}}
               </div>
               <div>
-                <span style="color: rgb(64, 158, 255)">邮编 <i class="fa fa-envelope-square" aria-hidden="true"></i></span>: {{addrPost}}
+                <span style="color: rgb(64, 158, 255)">邮编 <i class="fa fa-envelope-square" aria-hidden="true"></i></span>: {{userInfo.userPostCode}}
               </div>
             </div>
 
@@ -106,14 +123,14 @@
               <span>商品列表</span>
             </div>
             <div v-for="item in checkedProducts">
-              <el-row style="font-size: 12px">
+              <el-row style="font-size: 12px; margin-left: 10px">
                 <el-col :span="12">
-                  <span>{{item.name}}</span>
+                  <span>{{item.goodsInfo.goodsName}}</span>
                 </el-col>
                 <el-col :span="12">
-                  <span>{{item.price|currency('$')}}</span>
+                  <span>{{item.goodsInfo.goodsPrice|currency('$')}}</span>
                   <span> x </span>
-                  <span>{{item.num}}</span>
+                  <span>{{item.goodsNum}}</span>
                 </el-col>
               </el-row>
             </div>
@@ -139,46 +156,50 @@
 
           </el-col>
         </el-row>
-        <el-card class="box-card"
-                 v-for="(item, index) in orderListFilter"
-                 style="margin-bottom: 15px"
-                 :key="item._id">
+
+
+        <el-card v-for="item in orderListFilter"
+                 :key="item.billInfo.orderDate"
+                 class="box-card" style="margin-bottom: 10px">
           <div slot="header" class="clearfix">
+            <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
             <span style="font-weight: bold">订单</span>
-            <span style="margin-left: 20px; font-size: 12px"> {{item.createDate}} </span>
+            <span style="margin-left: 15px; font-size: 10px">
+              {{new Date(item.billInfo.orderDate).Format('yyyy-MM-dd hh:mm:ss')}}
+            </span>
 
             <div style="margin-top: 5px">
-              <span style="color: rgb(64, 158, 255)">姓名 <i class="fa fa-user" aria-hidden="true"></i></span>: {{item.addressInfo.userName}}
+            <span style="color: rgb(64, 158, 255)">姓名 <i class="fa fa-user" aria-hidden="true"></i></span>: {{userInfo.userName}}
             </div>
             <div>
-              <span style="color: rgb(64, 158, 255)">地址 <i class="fa fa-home" aria-hidden="true"></i></span>: {{item.addressInfo.streetName}}
+            <span style="color: rgb(64, 158, 255)">地址 <i class="fa fa-home" aria-hidden="true"></i></span>: {{userInfo.userAddress}}
             </div>
             <div>
-              <span style="color: rgb(64, 158, 255)">电话 <i class="fa fa-phone" aria-hidden="true"></i></span>:  {{item.addressInfo.tel}}
+            <span style="color: rgb(64, 158, 255)">电话 <i class="fa fa-phone" aria-hidden="true"></i></span>:  {{userInfo.userPhone}}
             </div>
             <div>
-              <span style="color: rgb(64, 158, 255)">邮编 <i class="fa fa-envelope-square" aria-hidden="true"></i></span>: {{item.addressInfo.postCode}}
+              <span style="color: rgb(64, 158, 255)">邮箱 <i class="fa fa-at" aria-hidden="true"></i></span>:  {{userInfo.userEmail}}
             </div>
           </div>
-
-          <div style="margin-bottom: 5px; font-weight: bold">
-            <span>商品列表</span>
-          </div>
-          <div v-for="item1 in item.goodsList">
-            <el-row style="font-size: 12px">
+          <div class="text item">
+            <div style="margin-bottom: 10px">
+              <span style="font-weight: bold">商品列表</span>
+            </div>
+            <el-row v-for="(item1, index) in item.billInfo.goodsList"
+                    :key="index"
+                    style="font-size: 12px; margin-left: 10px">
               <el-col :span="12">
-                <span>{{item1.name}}</span>
+                <span>{{item1.goodsInfo.goodsName}}</span>
               </el-col>
               <el-col :span="12">
-                <span>{{item1.price|currency('$')}}</span>
-                <span> x </span>
-                <span>{{item1.num}}</span>
+								<span>{{item1.quantity}}</span>
+								<span> x </span>
+								<span>{{item1.goodsInfo.goodsPrice|currency('$')}}</span>
               </el-col>
             </el-row>
-          </div>
-
-          <div style="margin-top: 5px">
-            <span style="font-weight: bold; color: #409EFF">总价 <i class="fa fa-calculator"></i> ：</span>{{item.totalPrice|currency('$')}}
+            <div style="margin-top: 5px">
+              <span style="font-weight: bold; color: #409EFF">总价 <i class="fa fa-calculator"> : </i></span> {{item.billInfo.totalPrice|currency('$')}}
+            </div>
           </div>
         </el-card>
 
@@ -218,25 +239,28 @@
       </div>
     </el-dialog>
 
-    <el-dialog :visible.sync="editAddrDialogVisible" width="75%" height="20vh">
+    <el-dialog :visible.sync="editUserInfoDialogVisible" width="75%" height="20vh">
       <el-form>
         <el-form-item label="名字" :label-width="formLabelWidth">
-          <el-input v-model="addrUserName" auto-complete="off"></el-input>
+          <el-input v-model="userInfo.userName" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="电话" :label-width="formLabelWidth" style="text-align: left">
-          <el-input v-model="addrTel" auto-complete="off"></el-input>
+          <el-input v-model="userInfo.userPhone" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="邮编" :label-width="formLabelWidth" style="text-align: left">
-          <el-input v-model="addrPost" auto-complete="off"></el-input>
+          <el-input v-model="userInfo.userPostCode" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="邮编" :label-width="formLabelWidth" style="text-align: left">
+          <el-input v-model="userInfo.userEmail" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="地址" :label-width="formLabelWidth" style="text-align: left">
-          <el-input v-model="addrString" auto-complete="off" type="textarea" :rows="3"></el-input>
+          <el-input v-model="userInfo.userAddress" auto-complete="off" type="textarea" :rows="3"></el-input>
         </el-form-item>
 
       </el-form>
       <div slot="footer" class="dialog-footer" style="padding: 0">
-        <el-button @click="editAddrDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addAddress">确 定</el-button>
+        <el-button @click="editUserInfoDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="editUserInfo">确 定</el-button>
       </div>
     </el-dialog>
 
@@ -262,9 +286,11 @@
 <script>
   import axios from 'axios'
   import {currency} from "../util/currency";
+  import ElCard from "element-ui/packages/card/src/main";
   require('./../util/util')
 	export default {
-		name: "info",
+    components: {ElCard},
+    name: "info",
 		data() {
 			return {
         addressList:[],
@@ -274,10 +300,10 @@
 				userPwd:'123456',
 				errorTip: false,
 				loginModalFlag:false,
-        selected: '1',
+        selected: '2',
 
 
-        editAddrDialogVisible: false,
+        editUserInfoDialogVisible: false,
 				dialogFormVisible: false,
         delAddrDialogVisible: false,
 
@@ -297,6 +323,14 @@
 
         checkedProducts: [],
         totalCheckedProductsPrice: 0,
+
+
+
+
+
+
+
+        userInfo: {}
 			}
 		},
     mounted() {
@@ -304,7 +338,7 @@
       this.init()
     },
     filters: {
-      currency: currency
+      currency: currency,
     },
     computed:{
       addressListFilter(){
@@ -318,10 +352,11 @@
       init(){
         axios.get("/users/infoList").then((response)=>{
           let res = response.data;
-          this.addressList = res.result.addressList;
-          this.orderList = res.result.orderList.reverse()
+          // this.orderList = res.result.orderList.reverse()
           this.checkedProducts = this.$route.query.checkedProducts
           this.totalCheckedProductsPrice = this.$route.query.totalPrice
+          this.userInfo = res.result
+          this.orderList = this.userInfo? this.userInfo.userBills.reverse() : []
         });
       },
       handleLimitChange(){
@@ -351,41 +386,24 @@
 					}
 				});
 			},
-      addAddress() {
-        axios.post('/users/addAddress', {
-          addrString: this.addrString,
-          addrUserName: this.addrUserName,
-          addrTel: this.addrTel,
-          addrPost: this.addrPost,
-          addrId: this.addressId
-        }).then((response) => {
-          let res = response.data
-          if (res.status === '0') {
-            this.editAddrDialogVisible = false
-            this.init()
-            this.handleLimitChange()
 
-            this.addrString = ''
-            this.addrUserName = ''
-            this.addrTel = ''
-            this.addrPost = ''
-            this.addressId = ''
+      editUserInfoConfirm() {
+        this.editUserInfoDialogVisible = true
+      },
+      editUserInfo() {
+
+        axios.post('/users/editUserInfo', {
+          userName: this.userInfo.userName,
+          userAddress: this.userInfo.userAddress,
+          userPhone: this.userInfo.userPhone,
+          userPostCode: this.userInfo.userPostCode,
+          userEmail: this.userInfo.userEmail
+        }).then(res => {
+          if (res.data.status === '0') {
+            this.editUserInfoDialogVisible = false
+            this.init()
           }
         })
-      },
-
-
-      editAddressConfirm(item) {
-        this.editAddrDialogVisible = true
-        this.checkAddress(item)
-      },
-
-      checkAddress(item) {
-        this.addrString = item.streetName
-        this.addrUserName = item.userName
-        this.addrTel = item.tel
-        this.addrPost = item.postCode
-        this.addressId = item._id
       },
 
       chooseAddress(item, index) {
@@ -427,31 +445,6 @@
             this.delAddrDialogVisible = false;
             this.init();
             this.handleLimitChange()
-          }
-        })
-      },
-
-      addOrder() {
-        axios.post('/users/addOrder', {
-          order: {
-            "createDate": new Date().Format('yyyy-MM-dd hh:mm:ss'),
-            "totalPrice": this.totalCheckedProductsPrice,
-            "addressInfo": {
-              "userName": this.addrUserName,
-              "streetName": this.addrString,
-              "postCode": this.addrPost,
-              "tel": this.addrTel
-            },
-            "goodsList": this.checkedProducts
-          }
-        }).then((response) => {
-          let res = response.data
-
-          if (res.status === '0') {
-            this.totalCheckedProductsPrice = 0
-            alert('操作成功');
-            this.$router.push('/info')
-            this.init()
           }
         })
       }

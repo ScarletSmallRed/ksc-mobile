@@ -2,6 +2,16 @@
   <div id="app">
     <router-view/>
     <mt-tabbar fixed v-model="selected">
+      <mt-tab-item id="Home">
+        <router-link to="/home">
+          <div style="font-size:2em; color:#409EFF">
+            <i class="fa fa-home"></i>
+            <div style="font-size: 10px;">
+              首页
+            </div>
+          </div>
+        </router-link>
+      </mt-tab-item>
       <mt-tab-item id="products">
         <router-link to="/">
           <div style="font-size:2em; color:#409EFF">

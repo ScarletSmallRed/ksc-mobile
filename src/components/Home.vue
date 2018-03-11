@@ -1,0 +1,145 @@
+<template>
+  <div>
+    <el-header style="position: fixed; top: 0px; left: 0; background: #409EFF; color: white;padding: 15px; width: 100%; z-index: 5">
+      <el-row :gutter="20">
+        <el-col :span="9">
+          <el-dropdown trigger="click"
+                       @command="setCategoriesFilter"
+                       style="position: relative; top: -5px;">
+
+
+            <el-button>
+              团购区域<i class="el-icon-arrow-down el-icon--right"></i>
+            </el-button>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item command="全部">南洋理工</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </el-col>
+
+        <el-col :span="15"><div>
+          <el-input
+            placeholder="请输入内容"
+            v-model="input23" style="position: relative; top: -5px">
+            <i slot="suffix" class="el-input__icon el-icon-search"></i>
+          </el-input>
+        </div></el-col>
+      </el-row>
+    </el-header>
+
+    <div style="margin-bottom: 40px">#################</div>
+
+    <div class="block">
+      <el-carousel trigger="click" height="200px" style="z-index: 1">
+        <el-carousel-item v-for="item in 4" :key="item">
+          <img src="https://images.pexels.com/photos/461198/pexels-photo-461198.jpeg?w=940&h=650&dpr=2&auto=compress&cs=tinysrgb" class="image">
+        </el-carousel-item>
+      </el-carousel>
+    </div>
+
+    <el-row class="grid-content bg-purple-dark">
+			<div >
+				距离南洋理工开始团购：
+			</div>
+      <div style="font-weight: bold">
+        10 : 10 : 10
+      </div>
+    </el-row>
+
+    <div style="margin-bottom: 10px; margin-top: 10px; color: #d9d9d9">
+      <span style="font-weight: bold">商家推荐</span>
+    </div>
+
+    <el-row :gutter="10">
+      <el-col :span="12" v-for="(o, index) in 2" :key="o">
+        <el-card :body-style="{ padding: '0px'}">
+          <img src="http://element-cn.eleme.io/static/hamburger.50e4091.png" class="image">
+          <div style="padding: 14px;">
+            <span>好吃的汉堡</span>
+            <div class="bottom clearfix">
+              <time class="time">{{ currentDate }}</time>
+              <el-button type="text" class="button">操作按钮</el-button>
+            </div>
+          </div>
+        </el-card>
+      </el-col>
+    </el-row>
+
+
+
+    <div style="margin-bottom: 10px; margin-top: 10px; color: #d9d9d9">
+      <span style="font-weight: bold">热销产品</span>
+    </div>
+
+    <el-row :gutter="10">
+      <el-col :span="12" v-for="(o, index) in 2" :key="o">
+        <el-card :body-style="{ padding: '0px'}">
+          <img src="/static/1比1/61火锅粉.jpg" class="image">
+          <div style="padding: 14px;">
+            <span>好吃的汉堡</span>
+            <div class="bottom clearfix">
+              <time class="time">{{ currentDate }}</time>
+              <el-button type="text" class="button">操作按钮</el-button>
+            </div>
+          </div>
+        </el-card>
+      </el-col>
+    </el-row>
+
+
+
+    <div style="margin-bottom: 60px"></div>
+
+
+  </div>
+</template>
+
+<script>
+    export default {
+        name: "home",
+      data() {
+          return {
+            currentDate: new Date()
+          }
+      }
+    }
+</script>
+
+<style scoped>
+  .el-carousel__item h3 {
+    color: #475669;
+    font-size: 14px;
+    opacity: 0.75;
+    line-height: 150px;
+    margin: 0;
+  }
+
+  .el-carousel__item:nth-child(2n) {
+    background-color: #99a9bf;
+  }
+
+  .el-carousel__item:nth-child(2n+1) {
+    background-color: #d3dce6;
+  }
+
+  .bg-purple-dark {
+    background: #99a9bf;
+  }
+  .bg-purple {
+    background: #d3dce6;
+  }
+  .bg-purple-light {
+    background: #e5e9f2;
+  }
+  .grid-content {
+    border-radius: 4px;
+    min-height: 36px;
+    margin-top: 10px;
+    text-align: center;
+  }
+
+  .image {
+    width: 100%;
+    display: block;
+  }
+</style>
