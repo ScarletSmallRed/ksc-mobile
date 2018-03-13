@@ -33,49 +33,6 @@
     </el-header>
     <div style="margin-bottom: 40px;text-align: center">_(:3」∠)_</div>
 
-    <!--<el-container>-->
-      <!--<el-row :gutter="10" style="padding-bottom: 10px">-->
-        <!--<el-col :span="12" v-for="(item) in products" :key="item.name" style="margin-bottom: 20px">-->
-          <!--<el-card :body-style="{ padding: '0px' }">-->
-            <!--<img src="/static/1比1/05年糕条.jpg"-->
-                 <!--class="image"-->
-                 <!--@click="goodDetailVisible=true, checkedGood=item">-->
-            <!--<div style="padding:5px 14px;">-->
-              <!--<span>{{item.goodsName}}</span>-->
-              <!--<div class="bottom clearfix">-->
-                <!--<div style="padding-bottom: 5px">-->
-                  <!--<time class="time">规格：{{item.goodsSize}}</time>-->
-                <!--</div>-->
-                <!--<div>-->
-                  <!--<time class="time">单价：{{item.goodsPrice|currency('$')}}</time>-->
-                <!--</div>-->
-
-
-
-
-
-
-
-                <!--<el-button type="text"-->
-                           <!--class="button"-->
-                           <!--style="position: relative; bottom: 10px" @click="addCartDialogVisible=true, checkedGood=item">-->
-                  <!--<i class="fa fa-cart-plus" style="font-size: 20px"></i>-->
-                <!--</el-button>-->
-
-
-
-
-
-
-
-
-
-              <!--</div>-->
-            <!--</div>-->
-          <!--</el-card>-->
-        <!--</el-col>-->
-      <!--</el-row>-->
-    <!--</el-container>-->
 
     <el-container v-for="(item) in products"
                   :key="item.name">
@@ -216,20 +173,6 @@
             this.loginDialogVisible = true
           }
         });
-        /*
-        axios.post('/users/addCart', {
-          goodsName: goodsName,
-          goodsNum: this.goodsNum
-        }).then((response) => {
-          var res = response.data
-          if (res.status === '0') {
-            this.getProducts()
-            alert('添加到购物车成功！')
-            this.goodsNum = 1
-          } else {
-            alert(res.msg)
-          }
-        })*/
       },
       closeDialog() {
         this.addCartDialogVisible = false

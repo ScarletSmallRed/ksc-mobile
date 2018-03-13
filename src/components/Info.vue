@@ -159,27 +159,37 @@
 
 
         <el-card v-for="item in orderListFilter"
-                 :key="item.billInfo.orderDate"
-                 class="box-card" style="margin-bottom: 10px">
+                 :key="item.billInfo._id"
+                 class="box-card"
+                 style="margin-bottom: 10px"
+                 v-if="item.billInfo.state !== 3">
           <div slot="header" class="clearfix">
-            <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
-            <span style="font-weight: bold">订单</span>
-            <span style="margin-left: 15px; font-size: 10px">
-              {{new Date(item.billInfo.orderDate).Format('yyyy-MM-dd hh:mm:ss')}}
+            <el-button v-if="item.billInfo.state === 0" style="float: right; padding: 3px 0" type="text" @click="changeBillState(item.billInfo._id, 0)">取消订单</el-button>
+            <el-button v-if="item.billInfo.state === 1" style="float: right; padding: 3px 0" type="text" @click="changeBillState(item.billInfo._id, 1)">确认收货</el-button>
+            <span style="font-weight: bold; font-size: 10px">订单号：</span>
+            <span style="font-size: 10px;">{{item.billInfo.doNumber}}</span>
+
+            <div>
+              <span style="font-weight: bold; font-size: 10px">订单时间：</span>
+              <span style="font-size: 10px">{{new Date(item.billInfo.orderDate).Format('yyyy-MM-dd hh:mm:ss')}}
             </span>
 
-            <div style="margin-top: 5px">
-            <span style="color: rgb(64, 158, 255)">姓名 <i class="fa fa-user" aria-hidden="true"></i></span>: {{userInfo.userName}}
+            </div>
+
+            <div>
+              <span style="font-weight: bold; font-size: 10px">完成时间：</span>
+              <span style="font-size: 10px">{{new Date(item.billInfo.completeDate).Format('yyyy-MM-dd hh:mm:ss')}}
+            </span>
+
             </div>
             <div>
-            <span style="color: rgb(64, 158, 255)">地址 <i class="fa fa-home" aria-hidden="true"></i></span>: {{userInfo.userAddress}}
+              <span style="font-weight: bold; font-size: 10px">订单状态：</span>
+              <span v-if="item.billInfo.state === 0" style="font-size: 10px; color: red">等待处理</span>
+              <span v-if="item.billInfo.state === 666" style="font-size: 10px; color: red">正在配送中</span>
+              <span v-if="item.billInfo.state === 1" style="font-size: 10px; color: orange">已发货</span>
+              <span v-if="item.billInfo.state === 2" style="font-size: 10px; color: green">交易完成</span>
             </div>
-            <div>
-            <span style="color: rgb(64, 158, 255)">电话 <i class="fa fa-phone" aria-hidden="true"></i></span>:  {{userInfo.userPhone}}
-            </div>
-            <div>
-              <span style="color: rgb(64, 158, 255)">邮箱 <i class="fa fa-at" aria-hidden="true"></i></span>:  {{userInfo.userEmail}}
-            </div>
+
           </div>
           <div class="text item">
             <div style="margin-bottom: 10px">
@@ -345,7 +355,10 @@
         return this.addressList.slice(0,this.limit);
       },
       orderListFilter() {
-        return this.orderList.slice(0, this.limit)
+        let legalOrderList = this.orderList.filter(item => {
+          return item.billInfo.state !== 3
+        })
+        return legalOrderList.slice(0, this.limit)
       }
     },
 		methods: {
@@ -446,6 +459,27 @@
             this.init();
             this.handleLimitChange()
           }
+        })
+      },
+      changeBillState(id, flag) {
+        let state = 0
+        let completeDate = null
+        if (flag === 0) {
+          state = 3
+        } else if (flag === 1) {
+          state = 2
+          completeDate = new Date()
+        }
+        const billData = {
+          state: state,
+          completeDate: completeDate
+        }
+        axios({
+          method: 'patch',
+          url: '/bills/' + id,
+          data: billData
+        }).then(res => {
+          this.init()
         })
       }
 		}

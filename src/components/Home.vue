@@ -4,15 +4,18 @@
       <el-row :gutter="20">
         <el-col :span="9">
           <el-dropdown trigger="click"
-                       @command="setCategoriesFilter"
+                       @command="setArea"
                        style="position: relative; top: -5px;">
 
 
             <el-button>
-              团购区域<i class="el-icon-arrow-down el-icon--right"></i>
+              {{checkedAreaName}}<i class="el-icon-arrow-down el-icon--right"></i>
             </el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="全部">南洋理工</el-dropdown-item>
+              <el-dropdown-item
+                v-for="item in areaNames"
+                :key="item"
+                :command="item">{{item}}</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </el-col>
@@ -20,7 +23,7 @@
         <el-col :span="15"><div>
           <el-input
             placeholder="请输入内容"
-            v-model="input23" style="position: relative; top: -5px">
+            style="position: relative; top: -5px">
             <i slot="suffix" class="el-input__icon el-icon-search"></i>
           </el-input>
         </div></el-col>
@@ -37,12 +40,12 @@
       </el-carousel>
     </div>
 
-    <el-row class="grid-content bg-purple-dark">
-			<div >
-				距离南洋理工开始团购：
+    <el-row class="grid-content countdown">
+			<div>
+        距离 <span style="font-weight: bold">{{checkedAreaName}}</span> 开始团购：
 			</div>
       <div style="font-weight: bold">
-        10 : 10 : 10
+        {{timeInteval.days}} 天 {{timeInteval.hours}} 时 {{timeInteval.minutes}} 分 {{timeInteval.seconds}} 秒
       </div>
     </el-row>
 
@@ -95,12 +98,110 @@
 </template>
 
 <script>
+    import axios from 'axios'
     export default {
-        name: "home",
+      name: "home",
       data() {
           return {
-            currentDate: new Date()
+            currentDate: new Date(),
+            timeInteval: {},
+            areaInfo: [],
+            areaNames: [],
+            checkedAreaName: '团购区域',
+            checkedDaysOfWeek: [6]
           }
+      },
+      mounted() {
+        setInterval(this.countdown, 1000)
+        this.getAraeInfo()
+      },
+      computed: {
+        getCheckedDaysOfWeek() {
+          this.checkedDaysOfWeek = this.areaInfo.filter(item => {
+            return item.areaName === this.checkedAreaName
+          }).map(item => {
+            return item.areaTime
+          })[0].map(item1 => {
+            console.log('#######')
+            console.log(item1)
+
+
+            switch (item1) {
+              case '星期日':
+                return 0
+                break
+              case '星期一':
+                return 1
+                break
+              case '星期二':
+                return 2
+                break
+              case '星期三':
+                return 3
+                break
+              case '星期四':
+                return 4
+                break
+              case '星期五':
+                return 5
+                break
+              case '星期六':
+                return 6
+                break
+            }
+          }).sort()
+
+          return this.checkedDaysOfWeek
+        }
+      },
+      methods: {
+        countdown() {
+
+          var startTime = new Date()
+
+          var daysNeeded = this.getCheckedDaysOfWeek.filter(function (item) {
+            return item > startTime.getDay()
+          })
+          var interval = daysNeeded.length === 0 ? (this.getCheckedDaysOfWeek[0] + 7 - startTime.getDay()) :(daysNeeded[0] - startTime.getDay())
+          var endTimeDate = new Date(interval * 24 * 3600 * 1000 + startTime.valueOf())
+          var endTimeString = endTimeDate.getFullYear() + '/' + (endTimeDate.getMonth() + 1) + '/' + endTimeDate.getDate()
+          // console.log(endTimeString)
+          // console.log(daysNeeded)
+
+          var endTime = new Date(endTimeString)
+          var timeInterval = endTime - startTime
+
+          var days = Math.floor(timeInterval / (24 * 3600 * 1000))
+
+          var leave1 = timeInterval % (24 * 3600 * 1000)
+          var hours = Math.floor(leave1 / (3600 * 1000))
+
+          var leave2 = leave1 % (3600 * 1000)
+          var minutes = Math.floor(leave2 / (60 * 1000))
+
+          var leave3 = leave2 % (60 * 1000)
+          var seconds = Math.round(leave3 / 1000)
+          // console.log(`days: ${days} hours: ${hours} minutes: ${minutes} seconds: ${seconds}`)
+
+          this.timeInteval =  {
+            days: days,
+            hours: hours,
+            minutes: minutes,
+            seconds: seconds
+          }
+        },
+        getAraeInfo() {
+          axios.get('/areas').then(res => {
+            this.areaInfo = res.data
+            this.areaNames = this.areaInfo.map(item => {
+              return item.areaName
+            })
+
+          })
+        },
+        setArea(command) {
+          this.checkedAreaName = command
+        }
       }
     }
 </script>
@@ -141,5 +242,9 @@
   .image {
     width: 100%;
     display: block;
+  }
+  .countdown {
+    background: linear-gradient(-33deg,#ff0000,#ff7f24,#ff0000);
+    color: white;
   }
 </style>

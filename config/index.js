@@ -34,6 +34,21 @@ module.exports = {
       },
       '/goods/*': {
         target: 'http://localhost:3000'
+      },
+      '/areas': {
+        target: 'http://localhost:3000'
+      },
+      '/billNumbers': {
+        target: 'http://localhost:3000'
+      },
+      '/billNumbers/*': {
+        target: 'http://localhost:3000'
+      },
+      '/bills': {
+        target: 'http://localhost:3000'
+      },
+      '/bills/*': {
+        target: 'http://localhost:3000'
       }
     },
 

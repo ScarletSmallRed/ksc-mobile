@@ -64,7 +64,8 @@
       name: "order-dialog",
       data() {
         return {
-          userInfo: {}
+          userInfo: {},
+          billNumbers: {}
         }
       },
       mounted() {
@@ -83,6 +84,9 @@
             // this.orderList = res.result.orderList.reverse()
             this.userInfo = res.result
           });
+          axios.get('/billNumbers').then(res => {
+            this.billNumbers = res.data
+          })
         },
         addOrderToBills() {
           let goodsList = []
@@ -99,22 +103,34 @@
               'userInfo': {
                 'userEmail': this.userInfo.userEmail,
                 'userName': this.userInfo.userName,
-                'address': this.userInfo.userAddress,
+                'homeAddress': this.userInfo.userAddress,
                 'phone': this.userInfo.userPhone,
-                'postCode': this.userInfo.userPostCode
+                'postCode': this.userInfo.userPostCode,
+                'areaAddress': 'NTU'
               },
               "goodsList": goodsList,
-              'doNumber': 10000000000
+              'doNumber': (this.billNumbers.doNumber + 1)
             }
           }).then((response) => {
             let res = response.data
 
             if (res.status === '0') {
               this.totalCheckedProductsPrice = 0
+              this.addDoNumber()
               this.addOrderToUsers(res.result)
-              // this.$emit('closeDialog')
               this.$emit('deleteCheckedProducts')
             }
+          })
+        },
+
+        addDoNumber() {
+          const billData = {
+            doNumber: this.billNumbers.doNumber + 1,
+          }
+          axios({
+            method:'patch',
+            url:'/billNumbers/' + this.billNumbers._id,
+            data: billData
           })
         },
 
