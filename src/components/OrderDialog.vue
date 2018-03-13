@@ -68,6 +68,11 @@
           billNumbers: {}
         }
       },
+      computed:{
+        checkedAreaName(){
+          return this.$store.getters.get_checkedAreaName
+        }
+      },
       mounted() {
         this.getUserInfo()
       },
@@ -106,7 +111,7 @@
                 'homeAddress': this.userInfo.userAddress,
                 'phone': this.userInfo.userPhone,
                 'postCode': this.userInfo.userPostCode,
-                'areaAddress': 'NTU'
+                'areaAddress': this.checkedAreaName
               },
               "goodsList": goodsList,
               'doNumber': (this.billNumbers.doNumber + 1)

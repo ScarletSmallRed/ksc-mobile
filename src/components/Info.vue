@@ -1,3 +1,4 @@
+<script src="../store.js"></script>
 <template>
 	<div>
     <el-header style="position: fixed; top: 0px; left: 0; background: #409EFF; color: white;padding: 15px; width: 100%; z-index: 1">
@@ -50,6 +51,9 @@
           <div style="position: relative">
             <div>
               <span style="color: rgb(64, 158, 255)">地址 <i class="fa fa-home" aria-hidden="true"></i></span>: {{userInfo.userAddress}}
+            </div>
+            <div>
+              <span style="color: rgb(64, 158, 255)">区域 <i class="fa fa-home" aria-hidden="true"></i></span>: {{userInfo.userAreaAddress}}
             </div>
             <div>
               <span style="color: rgb(64, 158, 255)">电话 <i class="fa fa-phone" aria-hidden="true"></i></span>:  {{userInfo.userPhone}}
@@ -176,7 +180,7 @@
 
             </div>
 
-            <div>
+            <div v-if="item.billInfo.completeDate">
               <span style="font-weight: bold; font-size: 10px">完成时间：</span>
               <span style="font-size: 10px">{{new Date(item.billInfo.completeDate).Format('yyyy-MM-dd hh:mm:ss')}}
             </span>

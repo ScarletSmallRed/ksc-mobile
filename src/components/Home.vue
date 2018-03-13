@@ -114,6 +114,7 @@
       mounted() {
         setInterval(this.countdown, 1000)
         this.getAraeInfo()
+        this.checkedAreaName = this.$store.state.checkedAreaName
       },
       computed: {
         getCheckedDaysOfWeek() {
@@ -201,6 +202,15 @@
         },
         setArea(command) {
           this.checkedAreaName = command
+          this.$store.dispatch('store_checkedAreaName',this.checkedAreaName)
+
+          axios({
+            method: 'post',
+            url: '/users/editUserInfo',
+            data: {
+              userAreaAddress: this.checkedAreaName
+            }
+          })
         }
       }
     }

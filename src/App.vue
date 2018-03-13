@@ -47,6 +47,7 @@
 </template>
 
 <script>
+  import axios from 'axios'
 	export default {
 		name: 'App',
 		data() {
@@ -54,6 +55,19 @@
 				selected: ''
 			}
 		},
+    created() {
+
+    },
+    methods: {
+		  loadUserInfo() {
+		    axios({
+          method: 'get',
+          url: '/users/infoList'
+        }).then(res => {
+          this.$store.dispatch('store_checkedAreaName', res.data.userAreaAddress)
+        })
+      }
+    }
 	}
 </script>
 
