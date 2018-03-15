@@ -56,7 +56,7 @@
 			}
 		},
     created() {
-
+      this.loadUserInfo()
     },
     methods: {
 		  loadUserInfo() {
@@ -64,7 +64,7 @@
           method: 'get',
           url: '/users/infoList'
         }).then(res => {
-          this.$store.dispatch('store_checkedAreaName', res.data.userAreaAddress)
+          this.$store.dispatch('store_checkedAreaName', res.data.result.userAreaAddress)
         })
       }
     }

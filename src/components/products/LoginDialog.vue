@@ -56,6 +56,12 @@
             let res = response.data;
             if(res.status=="0"){
               alert('登录成功')
+              axios({
+                method: 'get',
+                url: '/users/infoList'
+              }).then(res => {
+                this.$store.dispatch('store_checkedAreaName', res.data.result.userAreaAddress)
+              })
               this.$emit('closeDialog')
             }else{
               this.errorTip = true;

@@ -86,9 +86,9 @@
 <script>
   import axios from 'axios'
   import {currency} from "../util/currency";
-  import AddCartDialog from './../components/AddCartDialog'
-  import GoodDetailDialog from './../components/GoodDetailDialog'
-  import LoginDialog from './../components/LoginDialog'
+  import AddCartDialog from '@/components/products/AddCartDialog'
+  import GoodDetailDialog from '@/components/products/GoodDetailDialog'
+  import LoginDialog from '@/components/products/LoginDialog'
 
 	export default {
 		name: "products",

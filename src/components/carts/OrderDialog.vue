@@ -57,7 +57,7 @@
 
 <script>
     import axios from 'axios'
-    import {currency} from "../util/currency";
+    import {currency} from "../../util/currency";
 
     export default {
       props: ['visible', 'totalPrice', 'checkedProducts'],

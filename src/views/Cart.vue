@@ -89,15 +89,15 @@
                   v-on:closeDialog="closeDialog"></order-dialog>
 
 
-    <div style="margin-bottom: 40px"></div>
+    <div style="margin-bottom: 60px"></div>
   </div>
 </template>
 
 <script>
   import ElRow from "element-ui/packages/row/src/row";
   import axios from 'axios';
-  import {currency} from "../util/currency";
-  import OrderDialog from './../components/OrderDialog'
+  import {currency} from "@/util/currency";
+  import OrderDialog from '@/components/carts/OrderDialog'
 
 	export default {
     components: {
