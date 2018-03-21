@@ -3,7 +3,7 @@
     <router-view/>
     <mt-tabbar fixed v-model="selected">
       <mt-tab-item id="Home">
-        <router-link to="/home">
+        <router-link to="/">
           <div style="font-size:2em; color:#409EFF">
             <i class="fa fa-home"></i>
             <div style="font-size: 10px;">
@@ -13,7 +13,7 @@
         </router-link>
       </mt-tab-item>
       <mt-tab-item id="products">
-        <router-link to="/">
+        <router-link to="/products">
           <div style="font-size:2em; color:#409EFF">
             <i class="fa fa-th-list"></i>
             <div style="font-size: 10px;">

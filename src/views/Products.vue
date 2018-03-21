@@ -44,15 +44,15 @@
                @click="goodDetailVisible=true, checkedGood=item">
         </el-col>
         <el-col :span="16">
-          <div style="margin: 5px 0 20px 20px">{{item.goodsName}}</div>
-          <div style="margin: 50px 0 0 20px;font-size: 10px">规格：{{item.goodsSize}}</div>
+          <div style="margin: 15px 0 5px 20px;font-weight: bold">{{item.goodsName}}</div>
+          <div style="margin: 0px 0 0 20px;font-size: 11px; color: #757575">规格：{{item.goodsSize}}</div>
           <el-row>
             <el-col :span="16">
-              <div style="margin: 0 0 0 20px;font-size: 10px">单价：{{item.goodsPrice|currency('$')}}</div>
+              <div style="margin: 35px 0 0 20px;font-size: 15px;color: red;">{{item.goodsPrice|currency('$')}}</div>
             </el-col>
             <el-col :span="8" style="padding: 0 10px 0 0">
               <el-button type="text"
-                         style="position: relative; bottom: 10px"
+                         style="position: relative; bottom: -30px"
               class="button" @click="addCart(item)">
               <i class="fa fa-cart-plus" style="font-size: 25px;"></i>
               </el-button>
@@ -85,7 +85,7 @@
 
 <script>
   import axios from 'axios'
-  import {currency} from "../util/currency";
+  import {currency} from "@/util/currency";
   import AddCartDialog from '@/components/products/AddCartDialog'
   import GoodDetailDialog from '@/components/products/GoodDetailDialog'
   import LoginDialog from '@/components/products/LoginDialog'

@@ -9,7 +9,7 @@
 
 
             <el-button>
-              {{checkedAreaName}}<i class="el-icon-arrow-down el-icon--right"></i>
+              {{checkedAreaName ? checkedAreaName : '选择区域'}}<i class="el-icon-arrow-down el-icon--right"></i>
             </el-button>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item
@@ -20,29 +20,29 @@
           </el-dropdown>
         </el-col>
 
-        <el-col :span="15"><div>
-          <el-input
-            placeholder="请输入内容"
-            style="position: relative; top: -5px">
-            <i slot="suffix" class="el-input__icon el-icon-search"></i>
-          </el-input>
-        </div></el-col>
+        <!--<el-col :span="15"><div>-->
+          <!--<el-input-->
+            <!--placeholder="请输入内容"-->
+            <!--style="position: relative; top: -5px">-->
+            <!--<i slot="suffix" class="el-input__icon el-icon-search"></i>-->
+          <!--</el-input>-->
+        <!--</div></el-col>-->
       </el-row>
     </el-header>
 
-    <div style="margin-bottom: 40px">#################</div>
+    <div style="margin-bottom: 70px"></div>
 
     <div class="block">
-      <el-carousel trigger="click" height="200px" style="z-index: 1">
+      <el-carousel trigger="click" height="180px" style="z-index: 1; border-radius: 10px">
         <el-carousel-item v-for="item in 4" :key="item">
           <img src="https://images.pexels.com/photos/461198/pexels-photo-461198.jpeg?w=940&h=650&dpr=2&auto=compress&cs=tinysrgb" class="image">
         </el-carousel-item>
       </el-carousel>
     </div>
 
-    <el-row class="grid-content countdown">
+    <el-row class="grid-content countdown" style="border-radius: 23px">
 			<div>
-        距离 <span style="font-weight: bold">{{checkedAreaName}}</span> 开始团购：
+        距离 <span style="font-weight: bold">{{checkedAreaName}}</span> 本期团购下单截止日期：
 			</div>
       <div style="font-weight: bold">
         {{timeInteval.days}} 天 {{timeInteval.hours}} 时 {{timeInteval.minutes}} 分 {{timeInteval.seconds}} 秒
@@ -54,14 +54,14 @@
     </div>
 
     <el-row :gutter="10">
-      <el-col :span="12" v-for="(o, index) in 2" :key="o">
+      <el-col :span="12" v-for="(o, index) in products.slice(0, 2)" :key="o.goodsName">
         <el-card :body-style="{ padding: '0px'}">
           <img src="http://element-cn.eleme.io/static/hamburger.50e4091.png" class="image">
           <div style="padding: 14px;">
-            <span>好吃的汉堡</span>
+            <span class="goods-name">{{o.goodsName}}</span>
             <div class="bottom clearfix">
-              <time class="time">{{ currentDate }}</time>
-              <el-button type="text" class="button">操作按钮</el-button>
+              <span class="goods-price">{{ o.goodsPrice|currency('$') }}</span>
+              <el-button type="text" class="button cart" @click="addCart(o)">购物车</el-button>
             </div>
           </div>
         </el-card>
@@ -75,20 +75,26 @@
     </div>
 
     <el-row :gutter="10">
-      <el-col :span="12" v-for="(o, index) in 2" :key="o">
+      <el-col :span="12" v-for="(o, index) in products.slice(0,2)" :key="o.goodsName">
         <el-card :body-style="{ padding: '0px'}">
           <img src="/static/1比1/61火锅粉.jpg" class="image">
           <div style="padding: 14px;">
-            <span>好吃的汉堡</span>
+            <span class="goods-name">{{o.goodsName}}</span>
             <div class="bottom clearfix">
-              <time class="time">{{ currentDate }}</time>
-              <el-button type="text" class="button">操作按钮</el-button>
+              <span class="goods-price">{{ o.goodsPrice|currency('$') }}</span>
+              <el-button type="text" class="button cart" @click="addCart(o)">购物车</el-button>
             </div>
           </div>
         </el-card>
       </el-col>
     </el-row>
 
+    <add-cart-dialog
+      :addCartDialogVisible="addCartDialogVisible"
+      :item="checkedProduct" v-on:closeDialog="closeDialog"></add-cart-dialog>
+
+    <login-dialog :visible="loginDialogVisible"
+                  v-on:closeDialog="closeDialog"></login-dialog>
 
 
     <div style="margin-bottom: 60px"></div>
@@ -99,8 +105,16 @@
 
 <script>
     import axios from 'axios'
+    import AddCartDialog from '@/components/products/AddCartDialog'
+    import LoginDialog from '@/components/products/LoginDialog'
+    import {currency} from "@/util/currency";
+
     export default {
       name: "home",
+      components: {
+        AddCartDialog,
+        LoginDialog
+      },
       data() {
           return {
             currentDate: new Date(),
@@ -108,12 +122,21 @@
             areaInfo: [],
             areaNames: [],
             checkedAreaName: '团购区域',
-            checkedDaysOfWeek: [6]
+            checkedDaysOfWeek: [6],
+            checkedProduct: {},
+            addCartDialogVisible: false,
+            loginDialogVisible: false,
+
+            products: []
           }
+      },
+      filters: {
+        currency: currency
       },
       mounted() {
         setInterval(this.countdown, 1000)
         this.getAraeInfo()
+        this.getProducts()
         this.checkedAreaName = this.$store.state.checkedAreaName
       },
       computed: {
@@ -168,6 +191,8 @@
           var endTimeString = endTimeDate.getFullYear() + '/' + (endTimeDate.getMonth() + 1) + '/' + endTimeDate.getDate()
           // console.log(endTimeString)
           // console.log(daysNeeded)
+          console.log('#######')
+          console.log(endTimeDate)
 
           var endTime = new Date(endTimeString)
           var timeInterval = endTime - startTime
@@ -211,7 +236,44 @@
               userAreaAddress: this.checkedAreaName
             }
           })
-        }
+        },
+        getProducts() {
+          let condition = {
+            category: '全部',
+            isPriceUp: 1,
+            search: ''
+          }
+
+
+          axios({
+            method:'get',
+            url:'/goods/list',
+            params:condition
+          })
+            .then((res)=>{
+              this.products=res.data
+            })
+            .catch((err)=>{
+              console.log(err)
+            })
+        },
+
+        closeDialog() {
+          this.addCartDialogVisible = false
+          this.loginDialogVisible = false
+        },
+
+        addCart(item) {
+          axios.get("/users/checkLogin").then((response)=>{
+            var res = response.data;
+            if(res.status === '0'){
+              this.checkedProduct = item
+              this.addCartDialogVisible = true
+            } else {
+              this.loginDialogVisible = true
+            }
+          });
+        },
       }
     }
 </script>
@@ -239,5 +301,15 @@
   .countdown {
     background: linear-gradient(-33deg,#ff0000,#ff7f24,#ff0000);
     color: white;
+  }
+  .goods-name {
+    font-weight: bold;
+  }
+  .goods-price {
+    margin-top: 45px;
+    color: red;
+  }
+  .cart {
+    margin-left: 40px;
   }
 </style>

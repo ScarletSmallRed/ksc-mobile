@@ -88,6 +88,7 @@
         }).then(res => {
           if (res.data.status === '0') {
             this.$emit('closeDialog')
+            this.$emit('init')
           }
         })
       }

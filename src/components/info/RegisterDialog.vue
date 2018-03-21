@@ -12,7 +12,7 @@
         <el-form-item label="用户名" label-width="100px">
           <input v-model="userName">
         </el-form-item>
-        <el-form-item label="手机号(ID)" label-width="100px">
+        <el-form-item label="手机号" label-width="100px">
           <input v-model="userPhone">
         </el-form-item>
         <el-form-item label="区域" label-width="100px">
@@ -108,7 +108,7 @@
           if (response.status === '0') {
             this.closeDialog()
           } else if (response.status === '403') {
-            alert('电话号码已经被注册')
+            this.$message('该手机号已被注册')
           }
         })
       },

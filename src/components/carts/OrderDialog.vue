@@ -19,10 +19,10 @@
           <span style="color: rgb(64, 158, 255)">地址 <i class="fa fa-home" aria-hidden="true"></i></span>: {{userInfo.userAddress}}
         </div>
         <div>
-          <span style="color: rgb(64, 158, 255)">电话 <i class="fa fa-phone" aria-hidden="true"></i></span>:  {{userInfo.userPhone}}
+          <span style="color: rgb(64, 158, 255)">电话 <i class="fa fa-phone" aria-hidden="true"></i></span>:  {{userInfo.userId}}
         </div>
         <div>
-          <span style="color: rgb(64, 158, 255)">邮箱 <i class="fa fa-at" aria-hidden="true"></i></span>:  {{userInfo.userEmail}}
+          <span style="color: rgb(64, 158, 255)">团购区域 <i class="fa fa-envelope" aria-hidden="true"></i></span>:  {{userInfo.userAreaAddress}}
         </div>
       </div>
 
@@ -43,7 +43,7 @@
       </div>
 
       <div style="margin-top: 5px">
-        <span style="font-weight: bold; color: #409EFF">总价 <i class="fa fa-calculator"></i> ：</span>{{totalPrice|currency('$')}}
+        <span style="font-weight: bold; color: #409EFF">总价 <i class="fa fa-calculator"></i> ：</span><span style="color: red">{{totalPrice|currency('$')}}</span>
       </div>
     </el-card>
 

@@ -1,12 +1,8 @@
 <template>
   <div>
     <el-header style="position: fixed; top: 0px; left: 0; background: #409EFF; color: white;padding: 15px; width: 100%; z-index: 1">
-      <el-row :gutter="100">
-        <el-col :span="12">
-          <span style="color: #d9d9d9; padding-left: 20px; font-size: 20px">购物车</span>
-        </el-col>
-        <el-col :span="12">
-        </el-col>
+      <el-row :gutter="100" style="text-align: center">
+          <span style="color: white;font-size: 20px">购物车</span>
       </el-row>
     </el-header>
     <div style="margin-bottom: 40px">#################</div>
@@ -14,50 +10,37 @@
     <div style="margin: 15px 0;"></div>
     <el-checkbox-group v-model="checkedProducts" @change="handleCheckedCitiesChange">
         <el-row v-for="product in products" :key="product.name" :gutter="25" style="text-align: left; font-size: 13px; margin-bottom: 20px">
-          <el-col :span="7">
+          <el-col :span="11">
             <el-checkbox :label="product" @change="editCart('check', product)">{{product.goodsInfo.goodsName}}</el-checkbox>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="5">
             {{product.goodsInfo.goodsPrice|currency('$')}}
           </el-col>
-          <el-col :span="2">
-            x
-          </el-col>
-          <el-col :span="5" style="font-size: 13px">
+          <el-col :span="7" style="font-size: 13px; margin-right: 0px">
+
+
+
             <el-row :gutter="5">
-              <el-col :span="6">
-                <a @click="editCart('minus', product)"><i class="el-icon-minus"></i></a>
+              <el-col class="num-button" :span="7">
+                <a @click="editCart('minus', product)">-</a>
               </el-col>
-              <el-col :span="6">
+              <el-col :span="10" style="border-top: 1px #d9d9d9 solid;border-bottom: 1px #d9d9d9 solid; text-align: center">
                 {{product.goodsNum}}
               </el-col>
-              <el-col :span="6">
-                <a @click="editCart('add', product)"><i class="el-icon-plus"></i></a>
+              <el-col :span="7" class="num-button">
+                <a @click="editCart('add', product)">+</a>
               </el-col>
             </el-row>
-          </el-col>
-          <el-col :span="6">
-            <el-button type="primary"
-                       icon="el-icon-delete"
-                       size="mini"
-                       @click="delConfirm(product)">删除</el-button>
 
-            <el-dialog
-              :visible.sync="dialogVisible"
-              width="60%">
-              <span>确认删除？</span>
-              <span slot="footer" class="dialog-footer">
-                <el-row>
-                  <el-col :span="12">
-                    <el-button @click="dialogVisible = false" size="mini">取消</el-button>
-                  </el-col>
-                  <el-col :span="12">
-                    <el-button type="primary" @click="delCart()" size="mini">确认</el-button>
-                  </el-col>
-                </el-row>
-              </span>
-            </el-dialog>
+
+
+
           </el-col>
+          <!--<el-col :span="6">-->
+
+
+
+          <!--</el-col>-->
         </el-row>
     </el-checkbox-group>
 
@@ -89,6 +72,23 @@
                   v-on:closeDialog="closeDialog"></order-dialog>
 
 
+    <el-dialog
+    :visible.sync="dialogVisible"
+    width="60%">
+    <span>确认删除？</span>
+    <span slot="footer" class="dialog-footer">
+    <el-row>
+    <el-col :span="12">
+    <el-button @click="dialogVisible = false" size="mini">取消</el-button>
+    </el-col>
+    <el-col :span="12">
+    <el-button type="primary" @click="delCart()" size="mini">确认</el-button>
+    </el-col>
+    </el-row>
+    </span>
+    </el-dialog>
+
+
     <div style="margin-bottom: 60px"></div>
   </div>
 </template>
@@ -114,7 +114,8 @@
         dialogVisible: false,
         delItem: {},
         isDisable: false,
-        orderDialogVisible: false
+        orderDialogVisible: false,
+        productNum: 0
 			}
 		},
     mounted() {
@@ -178,8 +179,12 @@
         if (flag === 'add') {
           item.goodsNum++
         } else if (flag === 'minus') {
-          if (item.goodsNum > 1) {
-            item.goodsNum--
+          // if (item.goodsNum > 1) {
+          //   item.goodsNum--
+          // }
+          item.goodsNum--
+          if (item.goodsNum === 0) {
+            this.delConfirm(item)
           }
         } else if (flag === 'check') {
           console.log(item)
@@ -243,5 +248,11 @@
     left: 0;
     width: 100%;
     padding: 5px 20px 0px 20px;
+  }
+
+  .num-button {
+    border: 1px solid #d9d9d9;
+    background: #f5f7fa;
+    text-align: center
   }
 </style>

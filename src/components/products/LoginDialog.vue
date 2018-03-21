@@ -9,10 +9,10 @@
       :close-on-press-escape="false"
       center>
       <el-form>
-        <el-form-item label="账户" label-width="50px">
-          <input v-model="userName">
+        <el-form-item label="账户/手机" label-width="80px">
+          <input v-model="userId">
         </el-form-item>
-        <el-form-item label="密码" label-width="50px">
+        <el-form-item label="密码" label-width="80px">
           <input type="password" v-model="userPwd">
         </el-form-item>
         <div >
@@ -36,7 +36,7 @@
       data() {
         return {
           errorTip: false,
-          userName: '',
+          userId: '',
           userPwd: '',
         }
       },
@@ -45,12 +45,12 @@
           this.$emit('closeDialog')
         },
         login(){
-          if(!this.userName || !this.userPwd){
+          if(!this.userId || !this.userPwd){
             this.errorTip = true;
             return;
           }
           axios.post("/users/login",{
-            userName:this.userName,
+            userId:this.userId,
             userPwd:this.userPwd
           }).then((response)=>{
             let res = response.data;

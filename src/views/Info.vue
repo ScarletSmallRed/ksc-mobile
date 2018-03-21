@@ -2,10 +2,8 @@
 <template>
 	<div>
     <el-header style="position: fixed; top: 0px; left: 0; background: #409EFF; color: white;padding: 15px; padding-right: 0;width: 100%; z-index: 1">
-      <div style="float:right;width: 140px; margin: 0">
-      <span class="navbar-link" v-text="nickName" v-if="nickName" style="color: #d9d9d9;">
-      </span>
-        <i class="fa fa-user-circle" style="font-size: 20px; color: #d9d9d9"></i>
+      <div style="float:right;width: 100px; margin: 3px 0 0 0" v-if="!nickName">
+
         <a href="javascript:void(0)" class="login-a" @click="dialogFormVisible=true" v-if="!nickName">
           登录
         </a>
@@ -16,17 +14,31 @@
            v-if="!nickName">
           注册
         </a>
-        <a href="javascript:void(0)" class="login-a" @click="logOut" v-else>
-          <i class="fa fa-sign-out" style="font-size: 20px"></i> 登出
-        </a>
+
+
+      </div>
+      <div v-if="nickName" style="margin: 3px 0 0 0">
+        <el-row>
+          <el-col :span="12">
+            <span class="navbar-link" v-text="nickName" style="color: white;"></span>
+          </el-col>
+
+          <el-col :span="12" style="text-align: right; padding-right: 10px">
+            <a href="javascript:void(0)" class="login-a" @click="logOut">
+              <i class="fa fa-sign-out" style="font-size: 20px"></i> 登出
+            </a>
+          </el-col>
+        </el-row>
+
+
 
       </div>
     </el-header>
     <div style="margin-bottom: 95px">#################</div>
 
     <mt-navbar fixed v-model="selected" style="top: 60px">
-      <mt-tab-item id="1">地址</mt-tab-item>
-      <mt-tab-item id="2">订单</mt-tab-item>
+      <mt-tab-item id="1"><span style="font-size: 16px">地址</span></mt-tab-item>
+      <mt-tab-item id="2"><span style="font-size: 16px">订单</span></mt-tab-item>
     </mt-navbar>
 
     <div style="margin-bottom: 20px"></div>
@@ -36,7 +48,7 @@
       <mt-tab-container-item id="1">
         <el-row :gutter="20" style="margin-bottom: 10px">
           <el-col :span="12">
-            <div style="padding-left: 10px; color: #9d9696;">选择地址</div>
+            <div style="padding-left: 10px; color: #9d9696;font-size: 12px">个人信息</div>
           </el-col>
           <el-col :span="12" style="text-align: right">
           </el-col>
@@ -86,16 +98,17 @@
                  :key="item.billInfo._id"
                  class="box-card"
                  style="margin-bottom: 10px"
+                 :body-style="{ padding: '15px 0 0 20px' }"
                  v-if="item.billInfo.state !== 3">
           <div slot="header" class="clearfix">
             <el-button v-if="item.billInfo.state === 0" style="float: right; padding: 3px 0" type="text" @click="billStateDialogVisible=true, changedBillId=item.billInfo._id,flag=0">取消订单</el-button>
             <el-button v-if="item.billInfo.state === 1" style="float: right; padding: 3px 0" type="text" @click="changeBillState(item.billInfo._id, 1)">确认收货</el-button>
-            <span style="font-weight: bold; font-size: 10px">订单号：</span>
-            <span style="font-size: 10px;">{{item.billInfo.doNumber}}</span>
+            <span style="font-weight: bold; font-size: 14px">订单号：</span>
+            <span style="font-size: 14px;">{{item.billInfo.doNumber}}</span>
 
             <div>
-              <span style="font-weight: bold; font-size: 10px">订单时间：</span>
-              <span style="font-size: 10px">{{new Date(item.billInfo.orderDate).Format('yyyy-MM-dd hh:mm:ss')}}
+              <span style="font-weight: bold; font-size: 14px">订单时间：</span>
+              <span style="font-size: 14px">{{new Date(item.billInfo.orderDate).Format('yyyy-MM-dd hh:mm:ss')}}
             </span>
 
             </div>
@@ -107,11 +120,11 @@
 
             </div>
             <div>
-              <span style="font-weight: bold; font-size: 10px">订单状态：</span>
-              <span v-if="item.billInfo.state === 0" style="font-size: 10px; color: red">等待处理</span>
-              <span v-if="item.billInfo.state === 666" style="font-size: 10px; color: red">正在配送中</span>
-              <span v-if="item.billInfo.state === 1" style="font-size: 10px; color: orange">已发货</span>
-              <span v-if="item.billInfo.state === 2" style="font-size: 10px; color: green">交易完成</span>
+              <span style="font-weight: bold; font-size: 14px">订单状态：</span>
+              <span v-if="item.billInfo.state === 0" style="font-size: 14px; color: red">等待处理</span>
+              <span v-if="item.billInfo.state === 666" style="font-size: 14px; color: red">正在配送中</span>
+              <span v-if="item.billInfo.state === 1" style="font-size: 14px; color: orange">已发货</span>
+              <span v-if="item.billInfo.state === 2" style="font-size: 14px; color: green">交易完成</span>
             </div>
 
           </div>
@@ -121,18 +134,22 @@
             </div>
             <el-row v-for="(item1, index) in item.billInfo.goodsList"
                     :key="index"
-                    style="font-size: 12px; margin-left: 10px">
+                    style="font-size: 13px; margin-left: 10px">
               <el-col :span="12">
                 <span>{{item1.goodsInfo.goodsName}}</span>
               </el-col>
-              <el-col :span="12">
-								<span>{{item1.quantity}}</span>
-								<span> x </span>
+              <el-col :span="8">
 								<span>{{item1.goodsInfo.goodsPrice|currency('$')}}</span>
               </el-col>
+              <!--<el-col :span="3">-->
+                <!--<span> x </span>-->
+              <!--</el-col>-->
+              <el-col :span="4">
+                <span>x {{item1.quantity}}</span>
+              </el-col>
             </el-row>
-            <div style="margin-top: 5px">
-              <span style="font-weight: bold; color: #409EFF">总价 <i class="fa fa-calculator"> : </i></span> {{item.billInfo.totalPrice|currency('$')}}
+            <div style="margin-top: 10px;">
+              <span style="font-weight: bold; color: #409EFF">总价 <i class="fa fa-calculator"> : </i></span> <span style="color: red">{{item.billInfo.totalPrice|currency('$')}}</span>
             </div>
           </div>
         </el-card>
@@ -156,10 +173,10 @@
 
     <el-dialog :visible.sync="dialogFormVisible" width="75%" height="20vh">
       <el-form>
-        <el-form-item label="账户" :label-width="formLabelWidth">
+        <el-form-item label="账户/手机" label-width="80px">
           <el-input v-model="userId" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="密码" :label-width="formLabelWidth" style="text-align: left">
+        <el-form-item label="密码" label-width="80px" style="text-align: left">
           <el-input type="password" v-model="userPwd" auto-complete="off"></el-input>
         </el-form-item>
         <div >
@@ -197,7 +214,9 @@
       :visible="editUserInfoDialogVisible"
       :userName="userInfo.userName"
       :userAddress="userInfo.userAddress"
-      :userPwd="userInfo.userPwd" v-on:closeDialog="closeEditInfoDialog"></edit-user-info-dialog>
+      :userPwd="userInfo.userPwd"
+      v-on:closeDialog="closeEditInfoDialog"
+      v-on:init="init"></edit-user-info-dialog>
   </div>
 </template>
 
